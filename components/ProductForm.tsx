@@ -36,19 +36,19 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
 
         try {
             const res = await fetch(`/api/scrape-product?brand=${brand}&productId=${productId}`);
-            const data = await res.json();
-
             if (!res.ok) {
-                throw new Error(data.error || '商品情報の取得に失敗しました');
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.error || `HTTP error! status: ${res.status}`);
             }
-
+            const data = await res.json();
             setPreview(data.data);
             setSelectedCategory(data.data.category || '未分類');
             if (data.data.colors && data.data.colors.length > 0) {
                 setSelectedColor(data.data.colors[0]);
             }
         } catch (err: any) {
-            setError(err.message);
+            console.error('Fetch error:', err);
+            setError(`情報取得エラー: ${err.message}`);
         } finally {
             setLoading(false);
         }
@@ -58,8 +58,9 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
         if (!preview) return;
 
         setLoading(true);
+        setError(null);
         try {
-            const { error } = await supabase.from('closet_items').insert({
+            const { error: dbError } = await supabase.from('closet_items').insert({
                 brand: preview.brand,
                 product_id: preview.productId,
                 name: preview.title,
@@ -70,17 +71,17 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
                 category: selectedCategory,
             });
 
-            if (error) throw error;
+            if (dbError) throw dbError;
 
             // Reset form
             setProductId('');
             setPreview(null);
             setSelectedColor(null);
             setError(null);
-            // Notify parent to refresh grid
             onItemAdded();
         } catch (err: any) {
-            setError(err.message || 'クローゼットへの保存に失敗しました');
+            console.error('Save error:', err);
+            setError(`クローゼット保存エラー: ${err.message || '不明なエラー'}`);
         } finally {
             setLoading(false);
         }
