@@ -18,7 +18,7 @@ type ClosetItem = {
     created_at: string;
 };
 
-const CATEGORIES = ['すべて', 'トップス', 'アウター', 'ボトムス', 'インナー', 'ルームウェア', '小物・その他', '未分類'];
+const CATEGORIES = ['すべて', 'トップス', 'Tシャツ・カットソー', 'グラフィックTシャツ', 'アウター', 'ボトムス', 'インナー', 'ルームウェア', '小物・その他', '未分類'];
 
 export function ClosetGrid({ keyTrigger }: { keyTrigger: number }) {
     const [items, setItems] = useState<ClosetItem[]>([]);

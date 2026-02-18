@@ -76,13 +76,13 @@ export function WearLogModal({ date, onClose, onSaved, existingItemIds, existing
     });
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onClick={onClose}>
+        <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4" onClick={onClose}>
             <div
-                className="bg-white w-full max-w-md rounded-t-2xl max-h-[85vh] flex flex-col animate-in slide-in-from-bottom duration-300"
+                className="bg-white w-full max-w-md rounded-2xl max-h-[80vh] flex flex-col animate-in slide-in-from-bottom duration-300 shadow-xl"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b">
+                <div className="flex items-center justify-between p-4 border-b shrink-0">
                     <h3 className="font-bold text-gray-900">{displayDate} の着用記録</h3>
                     <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600">
                         <X className="w-5 h-5" />
@@ -90,7 +90,7 @@ export function WearLogModal({ date, onClose, onSaved, existingItemIds, existing
                 </div>
 
                 {/* Items */}
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-4 min-h-0">
                     {loading ? (
                         <div className="flex justify-center py-8">
                             <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
@@ -104,8 +104,8 @@ export function WearLogModal({ date, onClose, onSaved, existingItemIds, existing
                                         key={item.id}
                                         onClick={() => toggleItem(item.id)}
                                         className={`relative rounded-lg overflow-hidden border-2 transition-all ${selectedIds.has(item.id)
-                                                ? 'border-black shadow-md scale-[1.02]'
-                                                : 'border-transparent hover:border-gray-200'
+                                            ? 'border-black shadow-md scale-[1.02]'
+                                            : 'border-transparent hover:border-gray-200'
                                             }`}
                                     >
                                         <div className="aspect-[3/4] bg-gray-100">
@@ -141,8 +141,8 @@ export function WearLogModal({ date, onClose, onSaved, existingItemIds, existing
                     )}
                 </div>
 
-                {/* Footer */}
-                <div className="p-4 border-t">
+                {/* Footer - Always visible */}
+                <div className="p-4 border-t shrink-0 bg-white rounded-b-2xl">
                     <button
                         onClick={handleSave}
                         disabled={saving || selectedIds.size === 0}

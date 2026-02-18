@@ -14,7 +14,7 @@ type ProductData = {
     colors?: { code: string; name: string; imageUrl?: string }[];
 };
 
-const CATEGORIES = ['トップス', 'アウター', 'ボトムス', 'インナー', 'ルームウェア', '小物・その他', '未分類'];
+const CATEGORIES = ['トップス', 'Tシャツ・カットソー', 'グラフィックTシャツ', 'アウター', 'ボトムス', 'インナー', 'ルームウェア', '小物・その他', '未分類'];
 
 export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
     const [brand, setBrand] = useState<'UNIQLO' | 'GU'>('UNIQLO');

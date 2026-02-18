@@ -17,7 +17,7 @@ type ProductCardProps = {
     onUpdate?: () => void;
 };
 
-const CATEGORIES = ['トップス', 'アウター', 'ボトムス', 'インナー', 'ルームウェア', '小物・その他', '未分類'];
+const CATEGORIES = ['トップス', 'Tシャツ・カットソー', 'グラフィックTシャツ', 'アウター', 'ボトムス', 'インナー', 'ルームウェア', '小物・その他', '未分類'];
 
 export function ProductCard({ item, onUpdate }: ProductCardProps) {
     const [loading, setLoading] = useState(false);
