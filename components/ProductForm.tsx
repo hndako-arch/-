@@ -92,7 +92,6 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
             <h2 className="text-lg font-semibold mb-4 text-gray-800">アイテムを追加</h2>
 
             <form onSubmit={fetchProductInfo} className="space-y-4">
-                {/* Brand Selection */}
                 <div className="flex gap-4">
                     <label className="flex items-center gap-2 cursor-pointer">
                         <input
@@ -118,7 +117,6 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
                     </label>
                 </div>
 
-                {/* Product ID Input */}
                 <div className="flex gap-2">
                     <input
                         type="text"
@@ -137,11 +135,9 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
                     </button>
                 </div>
 
-                {/* Error Message */}
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </form>
 
-            {/* Preview Section */}
             {preview && (
                 <div className="mt-6 p-4 border rounded-lg bg-gray-50 flex gap-4 items-start animate-in fade-in slide-in-from-top-2">
                     <div className="w-24 aspect-[3/4] bg-gray-200 rounded-md overflow-hidden shrink-0 shadow-inner">
@@ -156,7 +152,6 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
                         <p className="text-sm text-gray-500 mt-1">{preview.brand} - {preview.productId}</p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                            {/* Color Selector */}
                             <div>
                                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">カラー</label>
                                 {preview.colors && preview.colors.length > 0 ? (
@@ -179,7 +174,6 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
                                 )}
                             </div>
 
-                            {/* Category Selector */}
                             <div>
                                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">カテゴリ</label>
                                 <select
@@ -194,16 +188,31 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
                             </div>
                         </div>
 
+                        <div className="flex flex-col sm:flex-row gap-2 mt-6">
+                            <a
+                                href={preview.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-4 py-2 text-xs text-center border border-gray-200 rounded-lg hover:bg-gray-200 transition-colors"
+                            >
+                                ページを見る
+                            </a>
+                            <button
+                                onClick={addToCloset}
+                                disabled={loading || (preview.colors && preview.colors.length > 0 && !selectedColor)}
+                                className="px-4 py-2 bg-black text-white text-xs rounded-lg hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2 flex-grow transition-all active:scale-[0.98]"
+                            >
+                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                                クローゼットに追加
+                            </button>
+                        </div>
                     </div>
                 </div>
-                </div>
-    )
-}
+            )}
 
-{/* Debug Info (Temporary) */ }
-<div className="mt-4 pt-4 border-t border-gray-100 text-[10px] text-gray-400">
-    <p>Debug: URL={process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'MISSING'} | KEY={process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'MISSING'}</p>
-</div>
-        </div >
+            <div className="mt-4 pt-4 border-t border-gray-100 text-[10px] text-gray-400">
+                <p>Debug: URL={process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'MISSING'} | KEY={process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'MISSING'}</p>
+            </div>
+        </div>
     );
 }
