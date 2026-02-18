@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { serverConfig } from '@/lib/server-config';
 
-// Initialize Gemini (API key from environment variable only)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(serverConfig.geminiApiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 export async function POST(request: Request) {
@@ -19,9 +20,9 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'クローゼットにアイテムがありません' }, { status: 400 });
         }
 
-        if (!process.env.GEMINI_API_KEY) {
+        if (!serverConfig.geminiApiKey) {
             return NextResponse.json({
-                error: 'APIキーが設定されていません',
+                error: 'Gemini APIキーが設定されていません。Vercelの環境変数にGEMINI_API_KEYを追加してください。',
                 mock: true
             }, { status: 500 });
         }
