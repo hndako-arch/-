@@ -20,8 +20,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'クローゼットにアイテムがありません' }, { status: 400 });
         }
 
-        if (!process.env.GEMINI_API_KEY) {
-            // Fallback for demo if key is missing
+        if (!process.env.GEMINI_API_KEY && !GEMINI_KEY) {
             return NextResponse.json({
                 error: 'APIキーが設定されていません',
                 mock: true
