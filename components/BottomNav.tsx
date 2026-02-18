@@ -2,15 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Shirt, Search, Sparkles, User } from 'lucide-react';
+import { Shirt, Sparkles, Heart, CalendarDays, Search } from 'lucide-react';
 
 export function BottomNav() {
     const pathname = usePathname();
 
     const navItems = [
         { label: 'クローゼット', href: '/', icon: Shirt },
+        { label: 'カレンダー', href: '/calendar', icon: CalendarDays },
         { label: 'AIコーデ', href: '/recommend', icon: Sparkles },
-        { label: 'プロフィール', href: '/profile', icon: User },
+        { label: '分析', href: '/analyze', icon: Search },
+        { label: 'お気に入り', href: '/favorites', icon: Heart },
     ];
 
     return (
@@ -27,8 +29,8 @@ export function BottomNav() {
                             className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive ? 'text-black' : 'text-gray-400 hover:text-gray-600'
                                 }`}
                         >
-                            <Icon className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
-                            <span className="text-[10px] font-medium">{item.label}</span>
+                            <Icon className={`w-5 h-5 ${isActive ? 'fill-current' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
+                            <span className="text-[9px] font-medium">{item.label}</span>
                         </Link>
                     );
                 })}

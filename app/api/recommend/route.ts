@@ -9,7 +9,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 export async function POST(request: Request) {
     try {
-        const { profile } = await request.json();
+        const { profile, weather } = await request.json();
 
         // 1. Fetch all closet items
         const { data: items, error } = await supabase
@@ -22,10 +22,15 @@ export async function POST(request: Request) {
 
         if (!serverConfig.geminiApiKey) {
             return NextResponse.json({
-                error: 'Gemini APIキーが設定されていません。Vercelの環境変数にGEMINI_API_KEYを追加してください。',
+                error: 'Gemini APIキーが設定されていません。',
                 mock: true
             }, { status: 500 });
         }
+
+        // Build weather context
+        const weatherContext = weather
+            ? `\n    現在の天気: ${weather.weatherEmoji} ${weather.weatherLabel}、気温 ${weather.temperature}°C（最高 ${weather.maxTemp}°C / 最低 ${weather.minTemp}°C）\n    天気に適した服装も考慮してください。`
+            : '';
 
         // 2. Construct Prompt
         const prompt = `
@@ -35,12 +40,14 @@ export async function POST(request: Request) {
     - 骨格タイプ: ${profile.body_type}
     - パーソナルカラー: ${profile.personal_color}
     - 好みのスタイル: ${profile.style_preference}
+    ${weatherContext}
 
     クローゼット内のアイテム (JSON):
-    ${JSON.stringify(items.map(i => ({ id: i.id, name: i.name, brand: i.brand, image: i.image_url })))}
+    ${JSON.stringify(items.map(i => ({ id: i.id, name: i.name, brand: i.brand, image: i.image_url, category: i.category, color: i.color })))}
 
     タスク:
     ユーザーのプロフィールと所持アイテムに基づき、3つの異なるコーディネートを提案してください。
+    ${weather ? '今日の天気・気温も考慮した実用的なコーデにしてください。' : ''}
     各コーディネートには、トップスとボトムス（必要に応じてアウターなど）を選択してください。
     なぜその組み合わせがユーザーの骨格タイプやパーソナルカラーに合うのか、具体的かつポジティブに日本語で解説してください。
 
