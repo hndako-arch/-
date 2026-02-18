@@ -209,10 +209,6 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
                     </div>
                 </div>
             )}
-
-            <div className="mt-4 pt-4 border-t border-gray-100 text-[10px] text-gray-400">
-                <p>Status: DB-URL=READY (Internal) | DB-KEY=READY (Internal)</p>
-            </div>
         </div>
     );
 }
