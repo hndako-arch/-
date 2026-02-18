@@ -2,9 +2,8 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Initialize Gemini
-const GEMINI_KEY = 'AIzaSyBVR6szcaTqLTTjud2D8RpeFVe03qgkU_E';
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || GEMINI_KEY);
+// Initialize Gemini (API key from environment variable only)
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 export async function POST(request: Request) {
@@ -20,7 +19,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'クローゼットにアイテムがありません' }, { status: 400 });
         }
 
-        if (!process.env.GEMINI_API_KEY && !GEMINI_KEY) {
+        if (!process.env.GEMINI_API_KEY) {
             return NextResponse.json({
                 error: 'APIキーが設定されていません',
                 mock: true
