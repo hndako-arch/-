@@ -211,7 +211,7 @@ export function ProductForm({ onItemAdded }: { onItemAdded: () => void }) {
             )}
 
             <div className="mt-4 pt-4 border-t border-gray-100 text-[10px] text-gray-400">
-                <p>Debug: URL={process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'MISSING'} | KEY={process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'MISSING'}</p>
+                <p>Status: DB-URL={process.env.NEXT_PUBLIC_SUPABASE_URL ? 'FOUND' : 'MISSING'} | DB-KEY={process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'FOUND' : 'MISSING'}</p>
             </div>
         </div>
     );
