@@ -27,6 +27,12 @@ export default function AnalyzePage() {
     const [error, setError] = useState<string | null>(null);
 
     const handleAnalyze = async () => {
+        const apiKey = localStorage.getItem('geminiApiKey');
+        if (!apiKey) {
+            setError("プロフィール画面の「高度な設定」からGemini APIキーを設定してください。");
+            return;
+        }
+
         setLoading(true);
         setError(null);
 
@@ -34,6 +40,7 @@ export default function AnalyzePage() {
             const res = await fetch('/api/analyze-closet', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ apiKey }),
             });
 
             const data = await res.json();

@@ -1,15 +1,21 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { serverConfig } from '@/lib/server-config';
-
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(serverConfig.geminiApiKey);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 export async function POST(request: Request) {
     try {
-        const { profile, weather } = await request.json();
+        const { profile, weather, apiKey } = await request.json();
+
+        const keyToUse = apiKey || process.env.GEMINI_API_KEY;
+        if (!keyToUse) {
+            return NextResponse.json({
+                error: 'プロフィール画面からGemini APIキーを設定してください。',
+                mock: true
+            }, { status: 500 });
+        }
+
+        const genAI = new GoogleGenerativeAI(keyToUse);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
         // 1. Fetch all closet items
         const { data: items, error } = await supabase
@@ -18,13 +24,6 @@ export async function POST(request: Request) {
 
         if (error || !items || items.length === 0) {
             return NextResponse.json({ error: 'クローゼットにアイテムがありません' }, { status: 400 });
-        }
-
-        if (!serverConfig.geminiApiKey) {
-            return NextResponse.json({
-                error: 'Gemini APIキーが設定されていません。',
-                mock: true
-            }, { status: 500 });
         }
 
         // Build weather context

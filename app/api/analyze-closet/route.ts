@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { serverConfig } from '@/lib/server-config';
 
-const genAI = new GoogleGenerativeAI(serverConfig.geminiApiKey);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-export async function POST() {
+export async function POST(request: Request) {
     try {
-        if (!serverConfig.geminiApiKey) {
+        const { apiKey } = await request.json();
+
+        const keyToUse = apiKey || process.env.GEMINI_API_KEY;
+        if (!keyToUse) {
             return NextResponse.json({ error: 'APIキーが設定されていません' }, { status: 500 });
         }
+
+        const genAI = new GoogleGenerativeAI(keyToUse);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
         const { data: items, error } = await supabase
             .from('closet_items')

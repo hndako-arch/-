@@ -19,6 +19,7 @@ export default function ProfilePage() {
     const [bodyType, setBodyType] = useState<BodyType | null>(null);
     const [personalColor, setPersonalColor] = useState<PersonalColor | null>(null);
     const [stylePreference, setStylePreference] = useState('');
+    const [geminiKey, setGeminiKey] = useState('');
 
     // Sinc local state with profile context when loaded
     useEffect(() => {
@@ -29,12 +30,23 @@ export default function ProfilePage() {
             setPersonalColor(profile.personal_color);
             setStylePreference(profile.style_preference || '');
         }
+
+        // Load API key from localStorage
+        const savedKey = localStorage.getItem('geminiApiKey');
+        if (savedKey) setGeminiKey(savedKey);
     }, [profile]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
         setMessage(null);
+
+        // Save API key to localStorage
+        if (geminiKey.trim()) {
+            localStorage.setItem('geminiApiKey', geminiKey.trim());
+        } else {
+            localStorage.removeItem('geminiApiKey');
+        }
 
         try {
             await updateProfile({
@@ -137,6 +149,26 @@ export default function ProfilePage() {
                             placeholder="例：カジュアル、ミニマリスト、ストリート系など"
                             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black/5 focus:outline-none h-24 resize-none"
                         />
+                    </section>
+
+                    {/* Developer Settings (API Key) */}
+                    <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h2 className="text-lg font-semibold mb-2 text-gray-800">高度な設定 (APIキー)</h2>
+                        <p className="text-xs text-gray-500 mb-4">
+                            AI機能を利用するためのGemini APIキーを設定します。キーはお使いのブラウザにのみ保存され、安全です。
+                        </p>
+                        <div>
+                            <input
+                                type="password"
+                                value={geminiKey}
+                                onChange={(e) => setGeminiKey(e.target.value)}
+                                placeholder="AIzaSy..."
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black/5 focus:outline-none font-mono text-sm"
+                            />
+                            <p className="text-[10px] text-gray-400 mt-2">
+                                ※ <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">Google AI Studio</a> から取得できます。
+                            </p>
+                        </div>
                     </section>
 
                     {/* Submit */}

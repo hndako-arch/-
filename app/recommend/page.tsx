@@ -60,6 +60,13 @@ export default function RecommendPage() {
 
     const handleRecommend = async () => {
         if (!profile) return;
+
+        const apiKey = localStorage.getItem('geminiApiKey');
+        if (!apiKey) {
+            setError("プロフィール画面の「高度な設定」からGemini APIキーを設定してください。");
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setSavedIndexes(new Set());
@@ -68,7 +75,7 @@ export default function RecommendPage() {
             const res = await fetch('/api/recommend', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ profile, weather }),
+                body: JSON.stringify({ profile, weather, apiKey }),
             });
 
             const data = await res.json();
@@ -177,8 +184,8 @@ export default function RecommendPage() {
                                         onClick={() => saveToFavorites(outfit, idx)}
                                         disabled={savedIndexes.has(idx)}
                                         className={`p-2 rounded-full transition-all ${savedIndexes.has(idx)
-                                                ? 'text-red-400'
-                                                : 'text-gray-400 hover:text-red-400 active:scale-90'
+                                            ? 'text-red-400'
+                                            : 'text-gray-400 hover:text-red-400 active:scale-90'
                                             }`}
                                     >
                                         <Heart className={`w-5 h-5 ${savedIndexes.has(idx) ? 'fill-current' : ''}`} />
