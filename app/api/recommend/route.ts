@@ -31,10 +31,16 @@ export async function POST(request: Request) {
             ? `\n    現在の天気: ${weather.weatherEmoji} ${weather.weatherLabel}、気温 ${weather.temperature}°C（最高 ${weather.maxTemp}°C / 最低 ${weather.minTemp}°C）\n    天気に適した服装も考慮してください。`
             : '';
 
+        const genderContext = profile.gender === 'man' ? '男性向け'
+            : profile.gender === 'woman' ? '女性向け'
+                : profile.gender === 'other' ? 'ユニセックス/指定なし'
+                    : '指定なし';
+
         // 2. Construct Prompt
         const prompt = `
     あなたはプロのファッションスタイリストです。
     ユーザープロフィール:
+    - 希望スタイル性別: ${genderContext}
     - 身長: ${profile.height}cm
     - 骨格タイプ: ${profile.body_type}
     - パーソナルカラー: ${profile.personal_color}

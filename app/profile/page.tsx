@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useProfile, BodyType, PersonalColor } from '@/context/ProfileContext';
+import { useProfile, BodyType, PersonalColor, Gender } from '@/context/ProfileContext';
 import { BodyTypeSelector } from '@/components/BodyTypeSelector';
 import { ColorSelector } from '@/components/ColorSelector';
+import { GenderSelector } from '@/components/GenderSelector';
 import { ArrowLeft, Check, Loader2 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -16,6 +17,7 @@ export default function ProfilePage() {
     // Local state for form
     const [height, setHeight] = useState<string>('');
     const [weight, setWeight] = useState<string>('');
+    const [gender, setGender] = useState<Gender | null>(null);
     const [bodyType, setBodyType] = useState<BodyType | null>(null);
     const [personalColor, setPersonalColor] = useState<PersonalColor | null>(null);
     const [stylePreference, setStylePreference] = useState('');
@@ -26,6 +28,7 @@ export default function ProfilePage() {
         if (profile) {
             setHeight(profile.height ? profile.height.toString() : '');
             setWeight(profile.weight ? profile.weight.toString() : '');
+            setGender(profile.gender);
             setBodyType(profile.body_type);
             setPersonalColor(profile.personal_color);
             setStylePreference(profile.style_preference || '');
@@ -52,6 +55,7 @@ export default function ProfilePage() {
             await updateProfile({
                 height: height ? parseFloat(height) : null,
                 weight: weight ? parseFloat(weight) : null,
+                gender: gender,
                 body_type: bodyType,
                 personal_color: personalColor,
                 style_preference: stylePreference,
@@ -116,6 +120,17 @@ export default function ProfilePage() {
                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black/5 focus:outline-none"
                                 />
                             </div>
+                        </div>
+                    </section>
+
+                    {/* Gender */}
+                    <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-800">希望する服の性別</h2>
+                        <div className="mb-4">
+                            <GenderSelector
+                                value={gender}
+                                onChange={(val) => setGender(val)}
+                            />
                         </div>
                     </section>
 

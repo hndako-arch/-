@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: Request) {
     try {
-        const { apiKey } = await request.json();
+        const { apiKey, profile } = await request.json();
 
         const keyToUse = apiKey || process.env.GEMINI_API_KEY;
         if (!keyToUse) {
@@ -22,8 +22,15 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'クローゼットにアイテムがありません' }, { status: 400 });
         }
 
+        let genderContext = '';
+        if (profile?.gender) {
+            const label = profile.gender === 'man' ? '男性向け' : profile.gender === 'woman' ? '女性向け' : 'ユニセックス';
+            genderContext = `ユーザーは【${label}】の傾向の服を求めています。`;
+        }
+
         const prompt = `
 あなたはファッションアナリストです。
+${genderContext}
 
 以下はユーザーのクローゼットの全アイテムです：
 ${JSON.stringify(items.map(i => ({ name: i.name, brand: i.brand, category: i.category, color: i.color })))}

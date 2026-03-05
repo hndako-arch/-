@@ -8,6 +8,7 @@ const USER_ID = '00000000-0000-0000-0000-000000000000';
 
 export type BodyType = 'Straight' | 'Wave' | 'Natural';
 export type PersonalColor = 'Spring' | 'Summer' | 'Autumn' | 'Winter';
+export type Gender = 'man' | 'woman' | 'other';
 
 export interface UserProfile {
     id: string;
@@ -15,6 +16,7 @@ export interface UserProfile {
     weight: number | null;
     body_type: BodyType | null;
     personal_color: PersonalColor | null;
+    gender: Gender | null;
     style_preference: string | null;
 }
 
@@ -56,6 +58,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                     weight: null,
                     body_type: null,
                     personal_color: null,
+                    gender: null,
                     style_preference: null
                 })
             }

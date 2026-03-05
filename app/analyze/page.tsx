@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useProfile } from '@/context/ProfileContext';
 import { Search, Loader2, ShoppingBag, Palette, BarChart3, Star } from 'lucide-react';
 
 type AnalysisResult = {
@@ -22,6 +23,7 @@ type AnalysisResult = {
 };
 
 export default function AnalyzePage() {
+    const { profile } = useProfile();
     const [result, setResult] = useState<AnalysisResult | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export default function AnalyzePage() {
             const res = await fetch('/api/analyze-closet', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ apiKey }),
+                body: JSON.stringify({ apiKey, profile }),
             });
 
             const data = await res.json();
