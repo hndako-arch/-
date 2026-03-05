@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         }
 
         const genAI = new GoogleGenerativeAI(keyToUse);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         // 1. Fetch all closet items
         const { data: items, error } = await supabase
