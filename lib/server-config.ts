@@ -1,6 +1,6 @@
-// Server-side configuration - NOT committed to git
-// This file provides fallback values when environment variables are unavailable
+// Server-side configuration
+// GEMINI_API_KEY must be set in Vercel Environment Variables (never in code)
 
 export const serverConfig = {
-    geminiApiKey: process.env.GEMINI_API_KEY || 'AIzaSyDDqKcMywr80d6DEdn63NlDYF98Cqh15HU',
+    geminiApiKey: process.env.GEMINI_API_KEY || '',
 };
