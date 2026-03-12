@@ -58,7 +58,34 @@ export default function RecommendPage() {
         fetchWeather();
     }, []);
 
-    const handleRecommend = async () => {
+    // Auto-fetch daily recommendation
+    useEffect(() => {
+        if (!profile || !weather) return;
+        
+        const apiKey = localStorage.getItem('geminiApiKey');
+        if (!apiKey) return; // Don't auto-fetch if no key
+
+        const todayDateStr = new Date().toLocaleDateString('ja-JP');
+        const cachedDataStr = localStorage.getItem('fusion_daily_outfits');
+        
+        if (cachedDataStr) {
+            try {
+                const cachedData = JSON.parse(cachedDataStr);
+                if (cachedData.date === todayDateStr && cachedData.outfits) {
+                    setOutfits(cachedData.outfits);
+                    return; // Already have today's cache, don't fetch
+                }
+            } catch {
+                // Invalid cache, ignore
+            }
+        }
+
+        // If we reach here, we need to fetch today's outfit
+        handleRecommend(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [profile, weather]); // Only run when profile and weather are fully loaded
+
+    const handleRecommend = async (isAuto = false) => {
         if (!profile) return;
 
         const apiKey = localStorage.getItem('geminiApiKey');
@@ -90,8 +117,19 @@ export default function RecommendPage() {
             }
 
             setOutfits(data.outfits);
+
+            // Save to cache
+            const todayDateStr = new Date().toLocaleDateString('ja-JP');
+            localStorage.setItem('fusion_daily_outfits', JSON.stringify({
+                date: todayDateStr,
+                outfits: data.outfits
+            }));
+
         } catch (err: any) {
-            setError(err.message);
+            // Only show error text if it was a manual request, hide auto-fetch errors from disrupting the UI too much
+            if (!isAuto) {
+                setError(err.message);
+            }
         } finally {
             setLoading(false);
         }
@@ -138,21 +176,19 @@ export default function RecommendPage() {
                     </div>
                 )}
 
-                {!outfits && !loading && (
+                {(!outfits && !loading) && (
                     <div className="text-center py-8">
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
-                            <h2 className="text-lg font-semibold text-gray-900 mb-2">新しいコーデを見つけませんか？</h2>
+                            <h2 className="text-lg font-semibold text-gray-900 mb-2">今日のコーデが見つかりませんでした</h2>
                             <p className="text-gray-500 text-sm mb-6">
-                                あなたのプロフィール（{profile?.body_type}、{profile?.personal_color}）
-                                {weather ? `と今日の天気（${weather.weatherEmoji}${weather.temperature}°C）` : ''}
-                                に基づき、クローゼットから最適なアイテムを提案します。
+                                手動でAIスタイリストにコーデを提案してもらうことができます。
                             </p>
                             <button
-                                onClick={handleRecommend}
+                                onClick={() => handleRecommend(false)}
                                 className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-medium text-lg shadow-lg hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                             >
                                 <Sparkles className="w-5 h-5" />
-                                コーデを提案してもらう
+                                新しいコーデを作る
                             </button>
                         </div>
                         {error && (
