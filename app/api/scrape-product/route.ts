@@ -87,6 +87,9 @@ export async function GET(request: Request) {
                     }
                 });
             } else {
+                if (response.status === 404) {
+                    return NextResponse.json({ error: '商品が見つかりませんでした。商品番号が正しいか、日本のオンラインストアで販売されている商品か確認してください。' }, { status: 404 });
+                }
                 return NextResponse.json({ error: '商品情報の取得に失敗しました。時間をおいて再度お試しください。' }, { status: response.status });
             }
         }
