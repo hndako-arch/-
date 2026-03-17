@@ -21,7 +21,10 @@ export async function GET(request: Request) {
 
     const colors: { code: string; name: string; imageUrl?: string }[] = [];
     const headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+        'Cache-Control': 'no-cache',
     };
 
     try {
@@ -56,11 +59,10 @@ export async function GET(request: Request) {
             console.error(`${brand} API Error:`, e);
         }
 
-        // 2. Fetch HTML for metadata and category
         let response = await fetch(url, { headers, redirect: 'follow' });
-        let html = await response.text();
+        let html = response.ok ? await response.text() : '';
 
-        if (brand === 'UNIQLO' && (html.includes('Redirecting to') || html.length < 1000)) {
+        if (brand === 'UNIQLO' && html && (html.includes('Redirecting to') || html.length < 1000)) {
             const redirectUrl = `https://www.uniqlo.com/jp/ja/products/E${productId}-000/00`;
             const retryResponse = await fetch(redirectUrl, { headers });
             if (retryResponse.ok) {
@@ -70,7 +72,23 @@ export async function GET(request: Request) {
         }
 
         if (!response.ok) {
-            return NextResponse.json({ error: 'Failed to fetch product page' }, { status: response.status });
+            if (colors.length > 0) {
+                // HTML fetch failed (e.g., Vercel IP blocked), but we got colors from Commerce API!
+                return NextResponse.json({
+                    success: true,
+                    data: {
+                        title: `${brand} 商品 ${productId}`,
+                        imageUrl: colors[0].imageUrl, // use the first color image
+                        url,
+                        productId,
+                        brand,
+                        category: '未分類',
+                        colors
+                    }
+                });
+            } else {
+                return NextResponse.json({ error: '商品情報の取得に失敗しました。時間をおいて再度お試しください。' }, { status: response.status });
+            }
         }
 
         const $ = load(html);
